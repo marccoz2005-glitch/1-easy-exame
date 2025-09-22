@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisador de Exames Médicos - OCR com Códigos Tasy</title>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 Analisador de Exames Médicos</h1>
+            <p>Sistema de análise OCR para extração de exames laboratoriais e mapeamento para códigos TUSS/Tasy</p>
+        </header>
+
+        <main>
+            <section class="upload-section">
+                <h2>📂 Upload de Arquivos</h2>
+                <div class="drop-zone" id="dropZone">
+                    <svg class="upload-icon" viewBox="0 0 24 24" width="48" height="48">
+                        <path fill="currentColor" d="M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z" />
+                    </svg>
+                    <h3>Selecione ou arraste a imagem do pedido médico</h3>
+                    <p>Formatos suportados: JPG, PNG, GIF, BMP</p>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                    <button class="btn-primary" onclick="document.getElementById('fileInput').click()">
+                        📁 Selecionar Arquivo
+                    </button>
+                </div>
+
+                <div id="preview" class="preview-container" style="display: none;">
+                    <img id="previewImage" alt="Preview">
+                    <button class="btn-remove" onclick="removeFile()">✖ Remover</button>
+                </div>
+            </section>
+
+            <section class="controls">
+                <div class="control">
+                    <label for="threshold">Limiar de Similaridade (0-100)</label>
+                    <div class="range-container">
+                        <input type="range" id="threshold" min="0" max="100" value="60">
+                        <span id="thresholdValue">60</span>
+                    </div>
+                </div>
+
+                <div class="control">
+                    <label for="mode">Modo de Análise</label>
+                    <select id="mode">
+                        <option value="comprehensive">Análise Abrangente</option>
+                        <option value="balanced">Análise Balanceada</option>
+                        <option value="strict">Análise Restrita</option>
+                    </select>
+                </div>
+
+                <div class="control">
+                    <label for="maxResults">Máx. Resultados</label>
+                    <input type="number" id="maxResults" value="20" min="5" max="50">
+                </div>
+            </section>
+
+            <button id="analyzeBtn" class="btn-analyze" disabled onclick="analyzeImage()">
+                🔍 Analisar Imagem
+            </button>
+
+            <div id="status" class="status" style="display: none;"></div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <div class="loader"></div>
+                <p id="loadingText">Processando imagem com OCR...</p>
+            </div>
+
+            <section id="results" class="results" style="display: none;">
+                <h2>📊 Resultados da Análise</h2>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="showTab('ocr')">Texto OCR</button>
+                    <button class="tab" onclick="showTab('exams')">Exames Identificados</button>
+                    <button class="tab" onclick="showTab('codes')">Códigos Tasy</button>
+                </div>
+
+                <div id="ocrTab" class="tab-content active">
+                    <h3>Texto Extraído</h3>
+                    <div id="ocrText" class="ocr-text"></div>
+                </div>
+
+                <div id="examsTab" class="tab-content">
+                    <h3>Exames Identificados</h3>
+                    <div id="examsList" class="exams-list"></div>
+                </div>
+
+                <div id="codesTab" class="tab-content">
+                    <h3>Códigos Tasy</h3>
+                    <table id="codesTable" class="codes-table">
+                        <thead>
+                            <tr>
+                                <th>Texto Encontrado</th>
+                                <th>Nome do Exame</th>
+                                <th>Código Tasy</th>
+                                <th>Código TUSS</th>
+                                <th>Similaridade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="codesTableBody"></tbody>
+                    </table>
+                    <button class="btn-export" onclick="exportResults()">
+                        📥 Exportar Resultados (CSV)
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer>Idealizado por MPC AANDRADE</footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src='https://unpkg.com/tesseract.js@4/dist/tesseract.min.js'></script>
+    <script src="assets/TUSS_database.js"></script>
+    <script src="assets/app.js"></script>
+</body>
+</html>
